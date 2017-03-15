@@ -72,8 +72,15 @@ app.delete('/todos/:id',function (req,res) {
 
 //PUT  /todos/:id
 app.put('/todos/:id',function (req,res) {
+    var todoId =parseInt(req.params.id,10);
+    var matchedTodo=_.findWhere(todos,{id: todoId});
     var body = _.pick(req.body,'description','completed') ;//use _.pick to only pick description znd completed
     var validAttributes ={};
+
+
+    if(!matchedTodo){
+        return res.status(404).send();
+    }
 
     if(body.hasOwnProperty('completed')&&_.isBoolean(body.completed)){
         validAttributes.completed =body.completed;
@@ -86,9 +93,9 @@ app.put('/todos/:id',function (req,res) {
     }else if(body.hasOwnProperty('description')){
         return res.status(400).send();
     }
-
-
-    //HERE 
+    
+      _.extend(matchedTodo, validAttributes);
+      res.json(matchedTodo);
 
 
 });
